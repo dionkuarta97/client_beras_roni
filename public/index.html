@@ -3,6 +3,14 @@
   <head>
     <meta charset="utf-8" />
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="%PUBLIC_URL%/plugins/fontawesome-free/css/all.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="%PUBLIC_URL%/dist/css/adminlte.min.css">
+    <link rel="stylesheet" href="%PUBLIC_URL%/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
+    <link rel="stylesheet" href="%PUBLIC_URL%/plugins/select2/css/select2.min.css">
+<link rel="stylesheet" href="%PUBLIC_URL%/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
     <meta
@@ -26,7 +34,7 @@
     -->
     <title>React App</title>
   </head>
-  <body>
+  <body class="hold-transition sidebar-mini layout-navbar-fixed layout-fixed">
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
     <!--
@@ -39,5 +47,27 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
+    <script src="%PUBLIC_URL%/plugins/jquery/jquery.min.js"></script>
+<!-- Bootstrap 4 -->
+    <script src="%PUBLIC_URL%/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- AdminLTE App -->
+    <script src="%PUBLIC_URL%/dist/js/adminlte.min.js"></script>
+    <script src="%PUBLIC_URL%/plugins/select2/js/select2.full.min.js"></script>
+<!-- AdminLTE for demo purposes -->
+<script>
+  $(function () {
+    //Initialize Select2 Elements
+    $('.select2').select2()
+
+    //Initialize Select2 Elements
+    $('.select2bs4').select2({
+      theme: 'bootstrap4'
+    })
+
+  })
+
+
+  // DropzoneJS Demo Code End
+</script>
   </body>
 </html>
