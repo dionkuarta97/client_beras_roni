@@ -12,6 +12,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { Button, Table } from "react-bootstrap";
 import ModalTambahCampuran from "../components/forms/ModalTmbahCampuran";
 import ModalJual from "../components/forms/ModalJual";
+import ListModalKelola from "../components/popup/ListModalKelola";
 
 const BerasBiasa = () => {
   const dispatch = useDispatch();
@@ -33,7 +34,7 @@ const BerasBiasa = () => {
   const totalHargaBeras = (arr) => {
     let temp = 0;
     for (const key in arr) {
-      temp += arr[key]["harga"];
+      temp += Number(arr[key]["harga"]);
     }
     return temp;
   };
@@ -62,7 +63,7 @@ const BerasBiasa = () => {
 
   useEffect(() => {
     if (valueModal > 0) {
-      dispatch(getKelolaBeras(valueModal, { status: "active" }));
+      dispatch(getKelolaBeras(valueModal, { status: "ready", stock: "ada" }));
     }
   }, [valueModal]);
 
@@ -187,7 +188,7 @@ const BerasBiasa = () => {
                         <td>
                           Rp.{" "}
                           {(
-                            el.harga + totalHargaBeras(el.modal_kelola)
+                            Number(el.harga) + totalHargaBeras(el.modal_kelola)
                           ).toLocaleString("id-ID")}{" "}
                           /Kg
                         </td>
@@ -196,12 +197,21 @@ const BerasBiasa = () => {
                           <ModalJual
                             cekStatus={cekStatusPenjualan(el.penjualan)}
                             harga_modal={
-                              el.harga + totalHargaBeras(el.modal_kelola)
+                              Number(el.harga) +
+                              totalHargaBeras(el.modal_kelola)
                             }
                             idBerasKelola={el.id}
+                            stock={Number(el.stock)}
                             tipe={"biasa"}
                             idModal={el.idModal}
                             idKategori={JSON.parse(value)}
+                          />
+                          <ListModalKelola
+                            tipe={el.tipe}
+                            berat={el.berat}
+                            data={el.modal_kelola}
+                            idBerasKelola={el.id}
+                            status={el.status}
                           />
                         </td>
                       </tr>

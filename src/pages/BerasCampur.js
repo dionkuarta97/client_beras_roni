@@ -3,6 +3,7 @@ import { Button, Table } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import ModalJual from "../components/forms/ModalJual";
+import ListModalKelola from "../components/popup/ListModalKelola";
 import { getBerasCampuran } from "../redux/modal/ModalAction";
 
 const BerasCampur = () => {
@@ -12,7 +13,7 @@ const BerasCampur = () => {
   const totalHargaBeras = (arr) => {
     let temp = 0;
     for (const key in arr) {
-      temp += arr[key]["harga"];
+      temp += Number(arr[key]["harga"]);
     }
     return temp;
   };
@@ -29,10 +30,11 @@ const BerasCampur = () => {
   };
 
   useEffect(() => {
-    dispatch(getBerasCampuran({ status: "active", limit: 100 }));
+    dispatch(getBerasCampuran({ status: "ready", limit: 100, stock: "ada" }));
   }, []);
 
   console.log(berasCampuran);
+
   return (
     <>
       <Button
@@ -77,19 +79,27 @@ const BerasCampur = () => {
                       <td>
                         Rp.{" "}
                         {(
-                          el.harga + totalHargaBeras(el.modal_kelola)
+                          Number(el.harga) + totalHargaBeras(el.modal_kelola)
                         ).toLocaleString("id-ID")}{" "}
                         /Kg
                       </td>
-                      <td>{el.berat.toLocaleString("id-ID")} Kg</td>
-                      <td>{el.stock.toLocaleString("id-ID")} Kg</td>
+                      <td>{Number(el.berat).toLocaleString("id-ID")} Kg</td>
+                      <td>{Number(el.stock).toLocaleString("id-ID")} Kg</td>
                       <td>
                         <ModalJual
                           cekStatus={cekStatusPenjualan(el.penjualan)}
                           harga_modal={
-                            el.harga + totalHargaBeras(el.modal_kelola)
+                            Number(el.harga) + totalHargaBeras(el.modal_kelola)
                           }
                           idBerasKelola={el.id}
+                          stock={Number(el.stock)}
+                        />
+                        <ListModalKelola
+                          tipe={el.tipe}
+                          berat={el.berat}
+                          data={el.modal_kelola}
+                          idBerasKelola={el.id}
+                          status={el.status}
                         />
                       </td>
                     </tr>

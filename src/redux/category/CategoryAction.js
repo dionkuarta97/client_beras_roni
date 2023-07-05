@@ -27,6 +27,7 @@ export const getCategory = (payload) => {
           dispatch(setCategory(defaultDoneState(data)));
         })
         .catch((err) => {
+          dispatch(setCategory({ data: null, error: true, loading: false }));
           reject(err.response.data);
         });
     });

@@ -48,8 +48,7 @@ const PenjualanContent = (props) => {
     }
     return temp;
   };
-
-  totalModalPenjualan(data);
+  console.log(totalModalPenjualan(data));
   return (
     <Row>
       <Col xs={6} md={6}>
@@ -66,6 +65,22 @@ const PenjualanContent = (props) => {
       <Col xs={6} md={6}>
         <p className="text-muted">
           Rp. {totalTerjualBiasa(data).toLocaleString("id-ID")}
+        </p>
+      </Col>
+      <Col xs={6} md={6}>
+        <strong>Modal Beras</strong>
+      </Col>
+      <Col xs={6} md={6}>
+        <p className="text-muted">
+          Rp. {totalModal(data).toLocaleString("id-ID")}
+        </p>
+      </Col>
+      <Col xs={6} md={6}>
+        <strong>Modal Penjualan</strong>
+      </Col>
+      <Col xs={6} md={6}>
+        <p className="text-muted">
+          Rp. {totalModalPenjualan(data).toLocaleString("id-ID")}
         </p>
       </Col>
       <Col xs={6} md={6}>
@@ -93,7 +108,7 @@ const PenjualanContent = (props) => {
           ).toLocaleString("id-ID")}
         </p>
       </Col>
-      <div align={"center"}>
+      <div align={"center"} style={{ marginTop: "2rem" }}>
         <ListPenjualan
           data={data}
           id={id}

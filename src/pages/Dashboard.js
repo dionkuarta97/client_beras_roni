@@ -1,3 +1,6 @@
+import { Col, Row } from "react-bootstrap";
+import InfoBoX from "./dashboardComponent/InfoBox";
+
 const Dashboard = () => {
   return (
     <>
@@ -6,7 +9,14 @@ const Dashboard = () => {
           <h3 className="card-title">Dashboard</h3>
         </div>
         <div className="card-body">
-          <h1>Dashboard</h1>
+          <div align="center">
+            <h3>Beras Masuk</h3>
+          </div>
+          <Row>
+            <Col md={4} xs={4}>
+              <InfoBoX title={"Beras Ready"} />
+            </Col>
+          </Row>
         </div>
       </div>
     </>

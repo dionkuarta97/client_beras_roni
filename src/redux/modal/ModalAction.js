@@ -178,6 +178,27 @@ export const getModalDatang = (id, params) => {
   };
 };
 
+export const updateModalDatang = (payload, id) => {
+  return (dispatch, getState) => {
+    return new Promise((resolve, reject) => {
+      server({
+        url: "/admin/modal/modal_datang/update/" + payload.id,
+        method: "PATCH",
+        headers: {
+          access_token: getState().AuthReducer.login.data.access_token,
+        },
+        data: payload,
+      })
+        .then(() => {
+          resolve("data berhasil di update");
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
+  };
+};
+
 export const createKelolaBeras = (payload) => {
   return (dispatch, getState) => {
     return new Promise((resolve, reject) => {
@@ -192,7 +213,7 @@ export const createKelolaBeras = (payload) => {
         .then(() => {
           resolve("data berhasil di tambahkan");
           if (!payload.tipe) {
-            dispatch(getKelolaBeras(payload.idModal, { status: "active" }));
+            dispatch(getKelolaBeras(payload.idModal));
           } else {
             dispatch(getBerasCampuran());
           }
@@ -217,10 +238,38 @@ export const createPengolahanBeras = (idModal, payload) => {
       })
         .then(() => {
           resolve("data berhasil di tambahkan");
-          dispatch(getKelolaBeras(idModal, { status: "active" }));
+          dispatch(getKelolaBeras(idModal));
         })
         .catch((err) => {
           reject(err.response.data);
+        });
+    });
+  };
+};
+
+export const updateModalKelola = (payload, idModal) => {
+  return (dispatch, getState) => {
+    return new Promise((resolve, reject) => {
+      server({
+        url: "/admin/modal/modal_kelola/update/" + payload.id,
+        method: "PATCH",
+        headers: {
+          access_token: getState().AuthReducer.login.data.access_token,
+        },
+        data: payload,
+      })
+        .then(() => {
+          resolve("data berhasil di update");
+        })
+        .then(() => {
+          if (idModal) {
+            dispatch(getKelolaBeras(idModal));
+          } else {
+            dispatch(getBerasCampuran());
+          }
+        })
+        .catch(() => {
+          reject("terjadi kesalahan");
         });
     });
   };
@@ -328,6 +377,30 @@ export const updateModal = (payload, params) => {
   };
 };
 
+export const updateStatusModal = (payload, idModal) => {
+  return (dispatch, getState) => {
+    return new Promise((resolve, reject) => {
+      server({
+        url: "/admin/modal/status/" + payload.id,
+        method: "PUT",
+        headers: {
+          access_token: getState().AuthReducer.login.data.access_token,
+        },
+        data: payload,
+      })
+        .then(() => {
+          resolve("data berhasil di ubah");
+        })
+        .catch((err) => {
+          reject(err.response.data);
+        })
+        .finally(() => {
+          dispatch(getModal({ category: idModal }));
+        });
+    });
+  };
+};
+
 export const createCampuran = (payload) => {
   return (dispatch, getState) => {
     return new Promise((resolve, reject) => {
@@ -346,6 +419,35 @@ export const createCampuran = (payload) => {
         .catch((err) => {
           console.log(err);
           reject(err.response.data);
+        });
+    });
+  };
+};
+
+export const updateBerasKelola = (payload, idModal) => {
+  return (dispatch, getState) => {
+    return new Promise((resolve, reject) => {
+      server({
+        url: "/admin/modal/beras_kelola/update/" + payload.id,
+        method: "PATCH",
+        headers: {
+          access_token: getState().AuthReducer.login.data.access_token,
+        },
+        data: payload,
+      })
+        .then(() => {
+          resolve("data berhasil di update");
+        })
+        .then(() => {
+          if (idModal) {
+            dispatch(getKelolaBeras(idModal));
+          } else {
+            dispatch(getBerasCampuran());
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          reject("data gagal di update");
         });
     });
   };

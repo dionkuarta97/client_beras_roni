@@ -3,6 +3,7 @@ import { Modal, Button, Form } from "react-bootstrap";
 import { useDispatch } from "react-redux";
 import {
   alertError,
+  alertErrorDua,
   alertSuccess,
   alertSure,
 } from "../../assets/js/Sweetalert";
@@ -37,7 +38,18 @@ const ModalKelolaBeras = (props) => {
 
   return (
     <>
-      <Button variant="primary" onClick={handleShow}>
+      <Button
+        variant="primary"
+        onClick={() => {
+          if (props.status !== "ready") {
+            alertErrorDua(
+              "Pastikan anda konfirmasi tidak ada atau tidak ada lagi modal ketika beras datang"
+            );
+          } else {
+            handleShow();
+          }
+        }}
+      >
         Kelola Beras
       </Button>
 

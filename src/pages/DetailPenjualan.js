@@ -86,6 +86,7 @@ const DetailPenjualan = () => {
                 {detailPenjualan.data?.penjualan.status === "pending" && (
                   <ModalModalPenjualan
                     idPenjualan={detailPenjualan.data?.penjualan.id}
+                    tipe={state.tipe}
                   />
                 )}
 

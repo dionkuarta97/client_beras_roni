@@ -23,7 +23,7 @@ const Penjualan = () => {
   const [langganan, setLangganan] = useState(true);
   const [params, setParams] = useState({
     status: "",
-    tipe: "",
+    tipe: "biasa",
   });
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -78,9 +78,8 @@ const Penjualan = () => {
                 dispatch(getAllPenjual({ ...params, tipe: e.target.value }));
               }}
             >
-              <option value={""}>Semua</option>
-              <option value={"campuran"}>Beras Campuran</option>
               <option value={"biasa"}>Beras Biasa</option>
+              <option value={"campuran"}>Beras Campuran</option>
             </Form.Select>
           </Form>
         </Col>
@@ -260,8 +259,8 @@ const Penjualan = () => {
           id="uncontrolled-tab-example"
           className="mb-3"
           onSelect={(key) => {
-            setParams({ ...params, status: key, tipe: "" });
-            dispatch(getAllPenjual({ ...params, status: key, tipe: "" }));
+            setParams({ ...params, status: key, tipe: "biasa" });
+            dispatch(getAllPenjual({ ...params, status: key, tipe: "biasa" }));
             setRowsPerPage(10);
             setPage(0);
           }}

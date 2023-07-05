@@ -85,7 +85,7 @@ export const createPenjualanCampuran = (payload) => {
   };
 };
 
-export const createModalPenjualan = (payload) => {
+export const createModalPenjualan = (payload, tipe) => {
   return (dispatch, getState) => {
     dispatch(setDetailPenjualan(defaultInitState));
     return new Promise((resolve, reject) => {
@@ -104,7 +104,7 @@ export const createModalPenjualan = (payload) => {
           reject(err);
         })
         .finally(() => {
-          dispatch(getDetialPenjualan(payload.idPenjualan));
+          dispatch(getDetialPenjualan(payload.idPenjualan, { tipe: tipe }));
         });
     });
   };

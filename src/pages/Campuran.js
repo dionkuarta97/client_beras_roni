@@ -1,11 +1,15 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ModalCampuran from "../components/forms/ModalCampuran";
-import { getBerasCampuran } from "../redux/modal/ModalAction";
+import {
+  getBerasCampuran,
+  updateBerasKelola,
+} from "../redux/modal/ModalAction";
 import TablePagination from "@mui/material/TablePagination";
-import { Table } from "react-bootstrap";
+import { Badge, Table, Button } from "react-bootstrap";
 import ListBerasCampuran from "../components/popup/ListBerasCampuran";
 import ListModalKelola from "../components/popup/ListModalKelola";
+import { alertError, alertSuccess, alertSure } from "../assets/js/Sweetalert";
 
 const Campuran = () => {
   const dispatch = useDispatch();
@@ -20,7 +24,7 @@ const Campuran = () => {
   const totalHargaBeras = (arr) => {
     let temp = 0;
     for (const key in arr) {
-      temp += arr[key]["harga"];
+      temp += Number(arr[key]["harga"]);
     }
     return temp;
   };
@@ -50,6 +54,7 @@ const Campuran = () => {
                 <th>Stock</th>
                 <th>Campuran</th>
                 <th>Modal</th>
+                <th>status</th>
               </tr>
             </thead>
             <tbody>
@@ -60,12 +65,12 @@ const Campuran = () => {
                   <td>
                     Rp.{" "}
                     {(
-                      el.harga + totalHargaBeras(el.modal_kelola)
+                      Number(el.harga) + totalHargaBeras(el.modal_kelola)
                     ).toLocaleString("id-ID")}{" "}
                     /Kg
                   </td>
-                  <td>{el.berat.toLocaleString("id-ID")} Kg</td>
-                  <td>{el.stock.toLocaleString("id-ID")} Kg</td>
+                  <td>{Number(el.berat).toLocaleString("id-ID")} Kg</td>
+                  <td>{Number(el.stock).toLocaleString("id-ID")} Kg</td>
                   <td>
                     <ListBerasCampuran campuran={el.campuran} id={el.id} />
                   </td>
@@ -73,10 +78,74 @@ const Campuran = () => {
                     <ListModalKelola
                       data={el.modal_kelola}
                       idBerasKelola={el.id}
-                      berat={el.berat}
+                      berat={Number(el.berat)}
+                      status={el.status}
                       campuran={el.campuran}
                       from={true}
                     />
+                  </td>
+                  <td>
+                    {el.status === "active" ? (
+                      <>
+                        <Badge bg="warning">Belum Siap</Badge>
+                        <Button
+                          variant="success"
+                          size="sm"
+                          style={{ marginLeft: "0.5rem" }}
+                          onClick={async () => {
+                            const result = await alertSure();
+                            if (result.value) {
+                              dispatch(
+                                updateBerasKelola({
+                                  id: el.id,
+                                  keterangan: el.keterangan,
+                                  berat: el.berat,
+                                  campuran: el.campuran,
+                                  status: "ready",
+                                })
+                              )
+                                .then((msg) => {
+                                  alertSuccess(msg);
+                                })
+                                .catch((msg) => {
+                                  alertError(msg);
+                                });
+                            }
+                          }}
+                        >
+                          Konfirmasi
+                        </Button>
+                        <Button
+                          variant="danger"
+                          size="sm"
+                          style={{ marginLeft: "0.5rem" }}
+                          onClick={async () => {
+                            const result = await alertSure();
+                            if (result.value) {
+                              dispatch(
+                                updateBerasKelola({
+                                  id: el.id,
+                                  keterangan: el.keterangan,
+                                  berat: el.berat,
+                                  campuran: el.campuran,
+                                  status: "inactive",
+                                })
+                              )
+                                .then((msg) => {
+                                  alertSuccess(msg);
+                                })
+                                .catch((msg) => {
+                                  alertError(msg);
+                                });
+                            }
+                          }}
+                        >
+                          Hide
+                        </Button>
+                      </>
+                    ) : (
+                      <Badge bg="success">Sudah Siap</Badge>
+                    )}
                   </td>
                 </tr>
               ))}

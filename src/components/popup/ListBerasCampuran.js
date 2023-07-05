@@ -21,7 +21,7 @@ const ListBerasCampuran = (props) => {
 
   return (
     <>
-      <Button variant="info" onClick={handleShow}>
+      <Button variant="info" size="sm" onClick={handleShow}>
         Lihat
       </Button>
 
@@ -62,13 +62,13 @@ const ListBerasCampuran = (props) => {
                     {el.kategori}
                   </Col>
                   <Col xs={3} md={3}>
-                    {el.berat.toLocaleString("id-ID")} Kg
+                    {Number(el.berat).toLocaleString("id-ID")} Kg
                   </Col>
                   <Col xs={3} md={3}>
-                    Rp. {el.harga.toLocaleString("id-ID")}/Kg
+                    Rp. {Number(el.harga).toLocaleString("id-ID")}/Kg
                   </Col>
                   <Col xs={3} md={3}>
-                    {el.perbandingan}
+                    {Number(el.perbandingan)}
                   </Col>
                 </Row>
               </ListGroup.Item>

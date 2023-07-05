@@ -1,18 +1,33 @@
-import { Button, Row, Table, Col } from "react-bootstrap";
+import { Button, Row, Table, Col, Badge } from "react-bootstrap";
+import { useDispatch } from "react-redux";
+import { alertError, alertSuccess, alertSure } from "../assets/js/Sweetalert";
+import { updateBerasKelola } from "../redux/modal/ModalAction";
 import ModalKelolaBeras from "./forms/ModalKelolaBeras";
+import ModalEditKelolaBeras from "./newForms/ModalEditKelolaBeras";
 import ListModalKelola from "./popup/ListModalKelola";
+import ListPenjualan from "./popup/ListPenjualan";
 
 const BerasKelola = (props) => {
-  const { data, realStock, penjualan } = props;
+  const {
+    data,
+    realStock,
+    penjualan,
+    status,
+    idModal,
+    realBerat,
+    id,
+    category,
+  } = props;
+  const dispatch = useDispatch();
 
   const totalStock = (arr) => {
     let temp = 0;
     if (arr !== null) {
       for (const key in arr) {
-        temp += arr[key]["berat"];
+        temp += Number(arr[key]["berat"]);
       }
     }
-
+    console.log(arr);
     return temp;
   };
 
@@ -20,7 +35,7 @@ const BerasKelola = (props) => {
     let temp = 0;
     if (arr !== null) {
       for (const key in arr) {
-        temp += arr[key]["stock"];
+        temp += Number(arr[key]["stock"]);
       }
     }
 
@@ -30,7 +45,7 @@ const BerasKelola = (props) => {
   const totalHargaBeras = (arr) => {
     let temp = 0;
     for (const key in arr) {
-      temp += arr[key]["harga"];
+      temp += Number(arr[key]["harga"]);
     }
     return temp;
   };
@@ -40,7 +55,7 @@ const BerasKelola = (props) => {
     for (const key in arr) {
       let campuran = arr[key]["beras_campuran"];
       for (const value in campuran) {
-        temp += campuran[value]["berat"];
+        temp += Number(campuran[value]["berat"]);
       }
     }
     return temp;
@@ -48,7 +63,6 @@ const BerasKelola = (props) => {
 
   const totalBerasTerjual = (arr) => {
     let temp = 0;
-    console.log(arr, "<<<<tes");
     for (const key in arr) {
       if (arr[key]["status"] !== "gagal") {
         if (arr[key]["keterangan"] !== "dari beras campuran")
@@ -60,7 +74,6 @@ const BerasKelola = (props) => {
   };
   const totalBerasCampuranTerjual = (arr) => {
     let temp = 0;
-    console.log(arr);
     for (const key in arr) {
       if (arr[key]["keterangan"] === "dari beras campuran")
         temp += Number(arr[key]["bobot"]);
@@ -71,7 +84,8 @@ const BerasKelola = (props) => {
   return (
     <>
       <ModalKelolaBeras
-        sisaStock={realStock - totalStock(data)}
+        status={status}
+        sisaStock={realStock}
         idModal={props.idModal}
         harga={props.harga}
       />
@@ -83,42 +97,44 @@ const BerasKelola = (props) => {
         <Col md={6} xs={12}>
           <strong>Sisa Beras yang belum di kelola</strong>
           <p className="text-muted">
-            {(realStock - totalStock(data)).toLocaleString("id-ID")}
+            {(realBerat - totalStock(data)).toLocaleString("id-ID")}
           </p>
           <hr />
         </Col>
         <Col md={6} xs={12}>
           <strong>Total Beras yang sudah di kelola</strong>
           <p className="text-muted">
-            {totalStock(data).toLocaleString("id-ID")}
+            {Number(totalStock(data)).toLocaleString("id-ID")}
           </p>
           <hr />
         </Col>
         <Col md={6} xs={12}>
           <strong>Total Beras yang sudah di dicampur</strong>
           <p className="text-muted">
-            {totalBerasCampuran(data).toLocaleString("id-ID")}
+            {Number(totalBerasCampuran(data)).toLocaleString("id-ID")}
           </p>
           <hr />
         </Col>
         <Col md={6} xs={12}>
           <strong>Total Beras campur yang terjual</strong>
           <p className="text-muted">
-            {totalBerasCampuranTerjual(penjualan).toLocaleString("id-ID")}
+            {Number(totalBerasCampuranTerjual(penjualan)).toLocaleString(
+              "id-ID"
+            )}
           </p>
           <hr />
         </Col>
         <Col md={6} xs={12}>
           <strong>Total Beras yang sudah terjual</strong>
           <p className="text-muted">
-            {totalBerasTerjual(penjualan).toLocaleString("id-ID")}
+            {Number(totalBerasTerjual(penjualan)).toLocaleString("id-ID")}
           </p>
           <hr />
         </Col>
         <Col md={6} xs={12}>
           <strong>Sisa Stock</strong>
           <p className="text-muted">
-            {sisaStock(data).toLocaleString("id-ID")}
+            {Number(realStock).toLocaleString("id-ID")}
           </p>
           <hr />
         </Col>
@@ -132,6 +148,7 @@ const BerasKelola = (props) => {
             <th>Berat</th>
             <th>Stock</th>
             <th>Dibuat</th>
+            <th>Status</th>
             <th>action</th>
           </tr>
         </thead>
@@ -142,7 +159,7 @@ const BerasKelola = (props) => {
               <td>
                 Rp.{" "}
                 {Number(
-                  el.harga + totalHargaBeras(el.modal_kelola)
+                  Number(el.harga) + totalHargaBeras(el.modal_kelola)
                 ).toLocaleString("id-ID")}
               </td>
               <td>{el.nama_pembuat}</td>
@@ -159,13 +176,99 @@ const BerasKelola = (props) => {
                 })}
               </td>
               <td>
+                {el.status === "active" ? (
+                  <Badge bg="warning">Belum Siap</Badge>
+                ) : (
+                  <Badge bg="success">Sudah Siap</Badge>
+                )}
+              </td>
+              <td>
                 <ListModalKelola
                   tipe={el.tipe}
                   berat={el.berat}
                   data={el.modal_kelola}
                   idBerasKelola={el.id}
                   idModal={props.idModal}
+                  status={el.status}
                 />
+                {el.status === "active" ? (
+                  <>
+                    <Button
+                      size="sm"
+                      style={{ marginLeft: "0.5rem" }}
+                      variant="danger"
+                      onClick={async () => {
+                        const result = await alertSure();
+                        if (result.value) {
+                          dispatch(
+                            updateBerasKelola(
+                              {
+                                id: el.id,
+                                keterangan: el.keterangan,
+                                berat: el.berat,
+                                status: "inactive",
+                              },
+                              idModal
+                            )
+                          )
+                            .then((msg) => {
+                              alertSuccess(msg);
+                            })
+                            .catch((msg) => {
+                              alertError(msg);
+                            });
+                        }
+                      }}
+                    >
+                      Hapus
+                    </Button>
+                    <ModalEditKelolaBeras
+                      data={{
+                        id: el.id,
+                        keterangan: el.keterangan,
+                        berat: el.berat,
+                        status: el.status,
+                      }}
+                      idModal={idModal}
+                    />
+                    <Button
+                      size="sm"
+                      style={{ marginLeft: "0.5rem" }}
+                      variant="success"
+                      onClick={async () => {
+                        const result = await alertSure();
+                        if (result.value) {
+                          dispatch(
+                            updateBerasKelola(
+                              {
+                                id: el.id,
+                                keterangan: el.keterangan,
+                                berat: el.berat,
+                                status: "ready",
+                              },
+                              idModal
+                            )
+                          )
+                            .then((msg) => {
+                              alertSuccess(msg);
+                            })
+                            .catch((msg) => {
+                              alertError(msg);
+                            });
+                        }
+                      }}
+                    >
+                      Konfirmasi
+                    </Button>
+                  </>
+                ) : (
+                  <ListPenjualan
+                    data={el.penjualan}
+                    id={id}
+                    category={category}
+                    idModal={idModal}
+                  />
+                )}
               </td>
             </tr>
           ))}

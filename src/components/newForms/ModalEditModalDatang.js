@@ -8,34 +8,33 @@ import {
 } from "../../assets/js/Sweetalert";
 
 import CurrencyInput from "react-currency-input";
-import { createModalPenjualan } from "../../redux/penjualan/PenjualanAction";
+import {
+  getModalDatang,
+  updateModalDatang,
+} from "../../redux/modal/ModalAction";
 
-const ModalModalPenjualan = (props) => {
-  const { idPenjualan, tipe } = props;
-  const dispatch = useDispatch();
+const ModalEditModalDatang = (props) => {
+  const { data, idModal } = props;
   const [show, setShow] = useState(false);
-  const [keterangan, setKeterangan] = useState("");
+  const dispatch = useDispatch();
+  const [keterangan, setKeterangan] = useState();
   const [harga, setHarga] = useState();
-  const [error, setError] = useState();
-  const handleClose = () => {
-    setShow(false);
-  };
+  const handleClose = () => setShow(false);
   const handleShow = () => {
     setShow(true);
-    setError([]);
-    setKeterangan("");
-    setHarga();
+    setKeterangan(data.keterangan);
+    setHarga(data.harga);
   };
 
   return (
     <>
-      <Button variant="primary" className="mt-1" onClick={handleShow}>
-        Tambah
+      <Button variant="warning" onClick={handleShow}>
+        Edit
       </Button>
 
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
-          <Modal.Title>Tambah</Modal.Title>
+          <Modal.Title>Edit</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form>
@@ -50,18 +49,12 @@ const ModalModalPenjualan = (props) => {
                 }}
               />
             </Form.Group>
-            {error?.keterangan &&
-              error.keterangan.map((el, idx) => (
-                <span style={{ color: "red" }} key={idx + "keterangan"}>
-                  {el}
-                </span>
-              ))}
             <Form.Group
               style={{
                 marginTop: "1rem",
               }}
             >
-              <Form.Label>Harga / Kilo gram Beras</Form.Label>
+              <Form.Label>Harga / Kg</Form.Label>
               <CurrencyInput
                 thousandSeparator="."
                 precision={0}
@@ -72,12 +65,6 @@ const ModalModalPenjualan = (props) => {
                   setHarga(Number(int));
                 }}
               />
-              {error?.harga &&
-                error.harga.map((el, idx) => (
-                  <span style={{ color: "red" }} key={idx + "harga"}>
-                    {el}
-                  </span>
-                ))}
             </Form.Group>
           </Form>
         </Modal.Body>
@@ -91,21 +78,23 @@ const ModalModalPenjualan = (props) => {
               const result = await alertSure();
               if (result.value) {
                 dispatch(
-                  createModalPenjualan(
-                    {
-                      keterangan,
-                      harga,
-                      idPenjualan,
-                    },
-                    tipe
-                  )
+                  updateModalDatang({
+                    ...data,
+                    keterangan: keterangan,
+                    harga: harga,
+                  })
                 )
                   .then((msg) => {
-                    alertSuccess("data berhasil ditambahkan");
+                    alertSuccess(msg);
+                    dispatch(getModalDatang(idModal, { status: "active" }));
                     handleClose();
                   })
                   .catch((err) => {
-                    setError(err);
+                    console.log(err);
+                    if (err.message) {
+                      alertError(err.message);
+                      handleClose();
+                    }
                   });
               }
             }}
@@ -118,4 +107,4 @@ const ModalModalPenjualan = (props) => {
   );
 };
 
-export default ModalModalPenjualan;
+export default ModalEditModalDatang;

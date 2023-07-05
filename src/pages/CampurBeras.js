@@ -27,7 +27,7 @@ const CampurBeras = () => {
   const totalHargaBeras = (arr) => {
     let temp = 0;
     for (const key in arr) {
-      temp += arr[key]["harga"];
+      temp += Number(arr[key]["harga"]);
     }
     return temp;
   };
@@ -49,7 +49,7 @@ const CampurBeras = () => {
 
   useEffect(() => {
     if (valueModal > 0) {
-      dispatch(getKelolaBeras(valueModal, { status: "active" }));
+      dispatch(getKelolaBeras(valueModal, { status: "ready", stock: "ada" }));
     }
   }, [valueModal]);
 
@@ -172,7 +172,7 @@ const CampurBeras = () => {
                         <td>
                           Rp.{" "}
                           {(
-                            el.harga + totalHargaBeras(el.modal_kelola)
+                            Number(el.harga) + totalHargaBeras(el.modal_kelola)
                           ).toLocaleString("id-ID")}{" "}
                           /Kg
                         </td>
@@ -180,6 +180,10 @@ const CampurBeras = () => {
                         <td>
                           <ModalTambahCampuran
                             data={el}
+                            harga={
+                              Number(el.harga) +
+                              totalHargaBeras(el.modal_kelola)
+                            }
                             id={state.id}
                             kategori={value}
                             idModal={valueModal}

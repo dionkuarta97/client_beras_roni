@@ -15,8 +15,15 @@ import { useNavigate } from "react-router-dom";
 const ModalJual = (props) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { idBerasKelola, idKategori, idModal, harga_modal, cekStatus, tipe } =
-    props;
+  const {
+    idBerasKelola,
+    idKategori,
+    idModal,
+    harga_modal,
+    cekStatus,
+    tipe,
+    stock,
+  } = props;
   const [show, setShow] = useState(false);
   const [error, setError] = useState({
     keterangan: null,
@@ -50,12 +57,14 @@ const ModalJual = (props) => {
     });
   };
 
-  console.log(cekStatus);
-
   return (
     <>
       <Button
         variant="success"
+        size="sm"
+        style={{
+          marginRight: "0.5rem",
+        }}
         onClick={() => {
           if (cekStatus) {
             alertErrorDua(
@@ -81,8 +90,22 @@ const ModalJual = (props) => {
               color: "green",
             }}
           >
-            Harga Modal : Rp. {harga_modal}
+            Harga Modal : Rp. {harga_modal.toLocaleString("id-ID")}
           </span>
+          <div
+            style={{
+              marginTop: "1rem",
+              marginBottom: "1rem",
+            }}
+          >
+            <span
+              style={{
+                color: "green",
+              }}
+            >
+              Stock : {stock.toLocaleString("id-ID")} Kg
+            </span>
+          </div>
           <Form>
             <Form.Group>
               <Form.Label>Keterangan</Form.Label>
@@ -181,17 +204,21 @@ const ModalJual = (props) => {
             onClick={async () => {
               const result = await alertSure();
               if (result.value) {
-                dispatch(createPenjualanCampuran(payload))
-                  .then((data) => {
-                    console.log(data);
-                    alertSuccess("data berhasil ditambahkan");
-                    navigate("/penjualan/detail/" + data.id, {
-                      state: { tipe: data.tipe },
+                if (payload.bobot > stock) {
+                  alertErrorDua("Berat Jual lebih besar dari stock yang ada");
+                } else {
+                  dispatch(createPenjualanCampuran(payload))
+                    .then((data) => {
+                      console.log(data);
+                      alertSuccess("data berhasil ditambahkan");
+                      navigate("/penjualan/detail/" + data.id, {
+                        state: { tipe: data.tipe },
+                      });
+                    })
+                    .catch((err) => {
+                      console.log(err);
                     });
-                  })
-                  .catch((err) => {
-                    console.log(err);
-                  });
+                }
               }
             }}
           >

@@ -17,7 +17,7 @@ function ModalTambahCampuran(props) {
   const dispatch = useDispatch();
   const [berat, setBerat] = useState(0);
   const [perbandingan, setPerbandingan] = useState(0);
-  const { id, data, kategori, idModal } = props;
+  const { id, data, kategori, idModal, harga } = props;
   const [category, setCategory] = useState("");
   const handleClose = () => setShow(false);
   const handleShow = () => {
@@ -25,7 +25,7 @@ function ModalTambahCampuran(props) {
     setBerat(0);
     setCategory(JSON.parse(kategori));
   };
-  console.log(id, data);
+  console.log(harga);
   return (
     <>
       <Button variant="success" onClick={handleShow}>
@@ -79,7 +79,7 @@ function ModalTambahCampuran(props) {
                 idModal: idModal,
                 idKategori: category.id,
                 kategori: category.nama,
-                harga: data.harga,
+                harga: harga,
                 berat: berat,
                 perbandingan: perbandingan,
               };

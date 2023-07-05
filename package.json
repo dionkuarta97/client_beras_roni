@@ -1,6 +1,7 @@
 {
   "name": "client_beras_roni",
   "version": "0.1.0",
+  "homepage": "https://admin.roni2r.com",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.9.0",

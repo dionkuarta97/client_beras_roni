@@ -1,12 +1,20 @@
 import { useState } from "react";
 import { Modal, Button, Table, Col, Row } from "react-bootstrap";
+import { useDispatch } from "react-redux";
+import {
+  alertError,
+  alertSuccess,
+  alertSure,
+} from "../../assets/js/Sweetalert";
+import { updateModalKelola } from "../../redux/modal/ModalAction";
 import ModalPengolahan from "../forms/ModalPengolahan";
 import ModalTambahModalKelolaCampuran from "../forms/ModalTambahModalKelolaCampuran";
+import ModalEditModalKelola from "../newForms/ModalEditModalKelola";
 
 const ListModalKelola = (props) => {
-  const { data, idBerasKelola, idModal, berat, from, campuran } = props;
+  const { data, idBerasKelola, idModal, berat, from, campuran, status } = props;
   const [show, setShow] = useState(false);
-
+  const dispatch = useDispatch();
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
@@ -21,7 +29,7 @@ const ListModalKelola = (props) => {
 
   return (
     <>
-      <Button variant="info" onClick={handleShow}>
+      <Button size="sm" variant="info" onClick={handleShow}>
         {from ? "Lihat" : "Detail"}
       </Button>
 
@@ -30,18 +38,22 @@ const ListModalKelola = (props) => {
           <Modal.Title>Modal Pengolahan Beras</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          {from ? (
-            <ModalTambahModalKelolaCampuran
-              idBerasKelola={idBerasKelola}
-              berat={berat}
-              campuran={campuran}
-            />
-          ) : (
-            <ModalPengolahan
-              idBerasKelola={idBerasKelola}
-              idModal={idModal}
-              handleClose2nd={handleClose}
-            />
+          {status === "active" && (
+            <>
+              {from ? (
+                <ModalTambahModalKelolaCampuran
+                  idBerasKelola={idBerasKelola}
+                  berat={berat}
+                  campuran={campuran}
+                />
+              ) : (
+                <ModalPengolahan
+                  idBerasKelola={idBerasKelola}
+                  idModal={idModal}
+                  handleClose2nd={handleClose}
+                />
+              )}
+            </>
           )}
 
           {data.length > 0 ? (
@@ -56,7 +68,7 @@ const ListModalKelola = (props) => {
                   <th>Harga</th>
                   <th>Total</th>
                   <th>Dibuat</th>
-                  <th>Action</th>
+                  {status !== "ready" && <th>Action</th>}
                 </tr>
               </thead>
               <tbody>
@@ -66,12 +78,45 @@ const ListModalKelola = (props) => {
                     <td>{el.harga}</td>
                     <td>{Number(el.harga * berat).toLocaleString("id-ID")}</td>
                     <td>{el.nama_pembuat}</td>
-                    <td>
-                      <Button variant="warning">Edit</Button>
-                      <Button variant="danger" style={{ marginLeft: "0.5rem" }}>
-                        Sembunyikan
-                      </Button>
-                    </td>
+                    {status !== "ready" && (
+                      <td>
+                        {!from && (
+                          <ModalEditModalKelola
+                            data={el}
+                            idModal={!from ? idModal : null}
+                          />
+                        )}
+
+                        <Button
+                          variant="danger"
+                          onClick={async () => {
+                            const result = await alertSure();
+                            if (result.value) {
+                              dispatch(
+                                updateModalKelola(
+                                  {
+                                    keterangan: el.keterangan,
+                                    id: el.id,
+                                    harga: el.harga,
+                                    status: "inactive",
+                                  },
+                                  idModal
+                                )
+                              )
+                                .then((msg) => {
+                                  alertSuccess(msg);
+                                })
+                                .catch((msg) => {
+                                  alertError(msg);
+                                });
+                            }
+                          }}
+                          style={{ marginLeft: "0.5rem" }}
+                        >
+                          Sembunyikan
+                        </Button>
+                      </td>
+                    )}
                   </tr>
                 ))}
               </tbody>
